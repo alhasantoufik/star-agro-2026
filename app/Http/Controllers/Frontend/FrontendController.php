@@ -1,0 +1,396 @@
+<?php
+
+namespace App\Http\Controllers\Frontend;
+
+use App\Models\Cta;
+use App\Models\Faq;
+use App\Models\Post;
+use App\Models\About;
+use App\Models\Brand;
+use App\Models\Banner;
+use App\Models\Review;
+use App\Models\Slider;
+use App\Models\Product;
+use App\Models\Project;
+use App\Models\Service;
+use App\Models\Category;
+use App\Models\WhyChoseUs;
+use App\Models\Achievement;
+use App\Models\Promobanner;
+use App\Models\ProjectVideo;
+use Illuminate\Http\Request;
+use App\Models\WebsiteSetting;
+use App\Models\WebsiteSocialIcon;
+use App\Http\Controllers\Controller;
+use App\Models\Career;
+use App\Models\CSR;
+use App\Models\ImageGallery;
+use App\Models\Privacypolicy;
+use App\Models\Returnrefund;
+use App\Models\Team;
+use App\Models\Termscondition;
+use App\Models\VideoGallery;
+
+class FrontendController extends Controller
+{
+    public function index()
+    {
+        $banner = Banner::select(['id', 'title', 'sub_title', 'description', 'button_name', 'button_url', 'image'])->first();
+        $categories = Category::with('products')->where('category_slug', '!=', 'default')->select('id', 'category_name', 'image', 'category_slug')->get();
+
+        $promobanners = Promobanner::where('is_active', 1)
+            ->latest()
+            ->get(['id', 'image', 'url']);
+
+        $about = About::first();
+        $social_icon = WebsiteSocialIcon::select(['id', 'messanger_url'])->first();
+        $website_setting = WebsiteSetting::select(['id', 'phone', 'website_title', 'email', 'address', 'footer_content', 'website_footer_logo', 'copyright_text'])->first();
+
+        $featured_products = Product::with(['category:id,category_name'])
+            ->where('is_active', 1)
+            ->where('is_featured', 1)
+            ->latest()
+            ->limit(8)
+            ->get(['id', 'category_id', 'product_name', 'product_slug', 'regular_price', 'discount_price', 'discount_type', 'thumbnail', 'short_description']);
+
+        $achievements = Achievement::where('is_active', 1)
+            ->latest()
+            ->get(['id', 'title', 'count_number', 'image']);
+
+        $reviews = Review::latest()->get(['id', 'name', 'profession', 'review', 'image']);
+
+        $cta = Cta::where('is_active', 1)->first();
+
+        $blogs = Post::latest()->take(3)->get();
+
+        $brands = Brand::latest()->take(6)->get();
+
+        return view('website.home-body', compact(['banner', 'categories', 'achievements', 'reviews', 'about', 'featured_products', 'blogs', 'promobanners', 'social_icon', 'website_setting', 'cta', 'brands']));
+    }
+
+    public function productPage(Request $request)
+    {
+        $pageTitle = 'Product';
+
+        $products = Product::where('is_active', 1)
+            ->when($request->category_id, function ($query) use ($request) {
+                $query->where('category_id', $request->category_id);
+            })
+            ->latest()
+            ->select([
+                'id',
+                'category_id',
+                'product_name',
+                'product_slug',
+                'regular_price',
+                'discount_price',
+                'discount_type',
+                'thumbnail',
+                'short_description'
+            ])
+            ->paginate(12);
+
+        if ($request->ajax()) {
+            return view('website.layouts.pages.product.product', compact('products'))->render();
+        }
+
+        $categories = Category::get(['id', 'category_name', 'category_slug']);
+        $brands = Brand::get(['id', 'brand_name']);
+
+        return view('website.layouts.pages.product.product', compact(
+            'products',
+            'categories',
+            'brands',
+            'pageTitle'
+        ));
+    }
+
+    public function productSinglePage($id)
+    {
+        $product = Product::with(['category:id,category_name'])
+            ->where('is_active', 1)
+            ->findOrFail($id);
+
+        $relatedProducts = Product::where('id', '!=', $product->id)
+            ->where('category_id', $product->category_id) // same category
+            ->where('is_active', 1)
+            ->latest()
+            ->take(4)
+            ->first([
+                'id',
+                'product_name',
+                'product_slug',
+                'regular_price',
+                'discount_price',
+                'discount_type',
+                'thumbnail',
+                'images',
+                'short_description',
+                'long_description'
+            ]);
+
+        return view(
+            'website.layouts.pages.product.productDetails',
+            compact('product', 'relatedProducts')
+        );
+    }
+
+
+    // Product search
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+
+        if ($query) {
+            $suggestions = Product::where('product_name', 'LIKE', '%' . $query . '%')
+                ->orWhere('regular_price', 'LIKE', '%' . $query . '%')
+                ->limit(5)
+                ->get(['id', 'product_name', 'regular_price', 'discount_price', 'discount_type', 'thumbnail']);
+
+            $formattedSuggestions = $suggestions->map(function ($product) {
+                $final_price = $product->regular_price;
+                $has_discount = false;
+
+                if ($product->discount_price > 0) {
+                    if ($product->discount_type === 'percent') {
+                        $final_price = $product->regular_price - ($product->regular_price * $product->discount_price) / 100;
+                    } elseif ($product->discount_type === 'flat') {
+                        $final_price = $product->regular_price - $product->discount_price;
+                    }
+
+                    // যদি ডিসকাউন্ট করার পরেও ফাইনাল প্রাইস রেগুলার প্রাইসের চেয়ে কম হয়, তাহলেই ডিসকাউন্ট ধরবো
+                    $has_discount = $final_price < $product->regular_price;
+                }
+
+                return [
+                    'id' => $product->id,
+                    'product_name' => $product->product_name,
+                    'regular_price' => $product->regular_price,
+                    'discount_price' => $has_discount ? $final_price : null,
+                    'final_price' => $has_discount ? $final_price : $product->regular_price,
+                    'thumbnail' => $product->thumbnail ? asset($product->thumbnail) : asset('default.jpg'),
+                    'url' => route('product_single.page', $product->id),
+                ];
+            });
+
+            return response()->json(['suggestions' => $formattedSuggestions]);
+        }
+
+        return response()->json(['suggestions' => []]);
+    }
+
+    public function priceFilter(Request $request)
+    {
+        $min = (float) $request->min_price;
+        $max = (float) $request->max_price;
+
+        $products = Product::all()->filter(function ($product) use ($min, $max) {
+            // Default price is regular
+            $final_price = $product->regular_price;
+
+            // Calculate final price based on discount type
+            if ($product->discount_price > 0) {
+                if ($product->discount_type === 'percent') {
+                    $final_price = $product->regular_price - ($product->regular_price * $product->discount_price) / 100;
+                } elseif ($product->discount_type === 'flat') {
+                    $final_price = $product->regular_price - $product->discount_price;
+                }
+            }
+
+            // Filter by final calculated price
+            return $final_price >= $min && $final_price <= $max;
+        });
+
+        $html = '';
+        foreach ($products as $product) {
+            $html .= view('website.layouts.partials.product_shop', compact('product'))->render();
+        }
+
+        return $html;
+    }
+
+    // Categorywise product filter
+    public function multiCategoryFilter(Request $request)
+    {
+        // Get the category_ids from the request, default to empty array if not present
+        $categoryIds = $request->input('category_ids', []);
+
+        // If no categories are selected, fetch all products
+        if (empty($categoryIds)) {
+            $products = Product::all(); // This will return all products
+        } else {
+            // If categories are selected, filter products by selected categories
+            $products = Product::whereIn('category_id', $categoryIds)->get();
+        }
+
+        $html = '';
+        foreach ($products as $product) {
+            $final_price = $product->regular_price;
+
+            // Apply discount if available
+            if ($product->discount_price > 0) {
+                if ($product->discount_type === 'percent') {
+                    $final_price = $product->regular_price - ($product->regular_price * $product->discount_price) / 100;
+                } elseif ($product->discount_type === 'flat') {
+                    $final_price = $product->regular_price - $product->discount_price;
+                }
+            }
+
+            // Append the rendered HTML for each product
+            $html .= view('website.layouts.partials.product_search_by_category', compact('product', 'final_price'))->render();
+        }
+
+        return response()->json(['html' => $html]);
+    }
+
+    // Product filter by brand
+
+    public function multiBrandFilter(Request $request)
+    {
+        // Get the category_ids from the request, default to empty array if not present
+        $brandIds = $request->input('brand_ids', []);
+
+        // If no categories are selected, fetch all products
+        if (empty($brandIds)) {
+            $products = Product::all(); // This will return all products
+        } else {
+            // If categories are selected, filter products by selected categories
+            $products = Product::whereIn('brand_id', $brandIds)->get();
+        }
+
+        $html = '';
+        foreach ($products as $product) {
+            $final_price = $product->regular_price;
+
+            // Apply discount if available
+            if ($product->discount_price > 0) {
+                if ($product->discount_type === 'percent') {
+                    $final_price = $product->regular_price - ($product->regular_price * $product->discount_price) / 100;
+                } elseif ($product->discount_type === 'flat') {
+                    $final_price = $product->regular_price - $product->discount_price;
+                }
+            }
+
+            // Append the rendered HTML for each product
+            $html .= view('website.layouts.partials.product_search_by_brand', compact('product', 'final_price'))->render();
+        }
+
+        return response()->json(['html' => $html]);
+    }
+
+    public function getCategoryProducts($id)
+    {
+        $pageTitle = 'Product Page';
+        $category = Category::with('products')->findOrFail($id);
+        return view('website.layouts.partials.get_category_products', compact('category', 'pageTitle'));
+    }
+
+    public function termsAndCondtion()
+    {
+        $pageTitle = 'Term & Condition';
+        $termsAndCondition = Termscondition::first();
+        return view('website.layouts.terms_and_condition', compact('termsAndCondition', 'pageTitle'));
+    }
+
+    // Privacy policy page method
+    public function privacyPolicyPage()
+    {
+        $pageTitle = 'Privacy policy';
+        $privacyPolicy = Privacypolicy::first();
+        return view('website.layouts.privacy_policy', compact('privacyPolicy', 'pageTitle'));
+    }
+
+    public function returnRefund()
+    {
+        $pageTitle = 'Return & Refund';
+        $returnRefund = Returnrefund::first();
+        return view('website.layouts.return_refund', compact('returnRefund', 'pageTitle'));
+    }
+
+    public function aboutUs()
+    {
+        $pageTitle = 'About us';
+        $returnAboutUs = About::first();
+        $blogs = Post::latest()->take(3)->get();
+
+        return view('website.layouts.about', compact('pageTitle', 'returnAboutUs', 'blogs'));
+    }
+
+
+    public function imageGallery()
+    {
+        $imageGalleries = ImageGallery::latest()->get();
+        return view('website.layouts.pages.gallery.image', compact('imageGalleries'));
+    }
+
+    public function videoGallery()
+    {
+        $videoGalleries = VideoGallery::latest()->get();
+        return view('website.layouts.pages.gallery.video', compact('videoGalleries'));
+    }
+
+    public function csr()
+    {
+        $csr = CSR::latest()->first();
+        return view('website.layouts.pages.csr.csr', compact('csr'));
+    }
+
+    public function career(Request $request)
+    {
+        $query = Career::where('is_active', 1);
+
+        // Sorting
+        if ($request->has('sort')) {
+            if ($request->sort == 'newest') {
+                $query->orderBy('created_at', 'desc');
+            } elseif ($request->sort == 'high_salary') {
+                $query->orderBy('salary', 'desc');
+            }
+        } else {
+            $query->orderBy('created_at', 'desc'); // default sort
+        }
+
+        $career = $query->get([
+            'id',
+            'job_title',
+            'location',
+            'job_type',
+            'salary',
+            'description',
+            'others_requirements',
+            'educational_requirements',
+            'experience_requirements',
+            'created_at'
+        ]);
+
+        $jobCount = $career->count();
+
+        return view('website.layouts.pages.career.career', compact('career', 'jobCount'));
+    }
+
+    public function show($id)
+    {
+        $job = Career::findOrFail($id);
+        return view('website.layouts.pages.career.career-details', compact('job'));
+    }
+
+
+    public function topManagement()
+    {
+        $achievements = Achievement::where('is_active', 1)
+            ->latest()
+            ->get(['id', 'title', 'count_number', 'image']);
+        $reviews = Review::latest()->get(['id', 'name', 'profession', 'review', 'image']);
+
+        $teams = Team::where('is_active', 1)
+            ->latest()
+            ->get(['id', 'name', 'position', 'image']);
+        return view('website.layouts.pages.topManagement.topManage', compact('achievements', 'reviews','teams'));
+    }
+
+    public function companyProfile()
+    {
+        return view('website.layouts.pages.companyProfile.profile');
+    }
+}
