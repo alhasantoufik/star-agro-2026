@@ -23,6 +23,7 @@ use App\Models\WebsiteSetting;
 use App\Models\WebsiteSocialIcon;
 use App\Http\Controllers\Controller;
 use App\Models\Career;
+use App\Models\CompanyProfile;
 use App\Models\CSR;
 use App\Models\ImageGallery;
 use App\Models\Privacypolicy;
@@ -65,7 +66,9 @@ class FrontendController extends Controller
 
         $brands = Brand::latest()->take(6)->get();
 
-        return view('website.home-body', compact(['banner', 'categories', 'achievements', 'reviews', 'about', 'featured_products', 'blogs', 'promobanners', 'social_icon', 'website_setting', 'cta', 'brands']));
+        $images = ImageGallery::latest()->take(6)->get();
+
+        return view('website.home-body', compact(['banner', 'categories', 'achievements', 'reviews', 'about', 'featured_products', 'blogs', 'promobanners', 'social_icon', 'website_setting', 'cta', 'brands','images']));
     }
 
     public function productPage(Request $request)
@@ -386,11 +389,27 @@ class FrontendController extends Controller
         $teams = Team::where('is_active', 1)
             ->latest()
             ->get(['id', 'name', 'position', 'image']);
-        return view('website.layouts.pages.topManagement.topManage', compact('achievements', 'reviews','teams'));
+        return view('website.layouts.pages.topManagement.topManage', compact('achievements', 'reviews', 'teams'));
     }
 
     public function companyProfile()
     {
-        return view('website.layouts.pages.companyProfile.profile');
+        $profile = CompanyProfile::where('is_active', 1)
+            ->latest()
+            ->first(['id', 'title', 'sub_title', 'description', 'file']);
+
+        return view(
+            'website.layouts.pages.companyProfile.profile',
+            compact('profile')
+        );
+    }
+
+    public function categoryProducts($slug)
+    {
+        $category = Category::where('category_slug', $slug)
+            ->with('products')
+            ->firstOrFail();
+
+        return view('website.layouts.pages.product.productByCategory', compact('category'));
     }
 }

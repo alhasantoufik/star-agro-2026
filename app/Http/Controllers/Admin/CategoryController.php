@@ -73,38 +73,32 @@ class CategoryController extends Controller
         return redirect()->route('category.index');
     }
 
+
     public function destroy($id)
     {
-        $category = Category::find($id);
+        $category = Category::findOrFail($id);
 
-        if ($category->category_slug == 'default') {
-            Toastr::error('Default category cannot be deleted.');
+        // 🔴 যদি category-এর নিচে product থাকে
+        if ($category->products()->exists()) {
+            Toastr::error('Please delete product first under this Catgeory.');
             return back();
         }
 
-
-        $defaultCategory = Category::where('category_slug', 'default')->first();
-        if (!$defaultCategory) {
-            Toastr::error('Category deleted successfully.');
-            return back();
-        }
-        $category->products()->update([
-            'category_id' => $defaultCategory->id
-        ]);
-
-        if ($category) {
-            if (!empty($category->image)) {
-                $oldImagePath = public_path($category->image);
-                if (file_exists($oldImagePath) && is_file($oldImagePath)) {
-                    unlink($oldImagePath);
-                }
+        // image delete
+        if (!empty($category->image)) {
+            $oldImagePath = public_path($category->image);
+            if (file_exists($oldImagePath) && is_file($oldImagePath)) {
+                unlink($oldImagePath);
             }
         }
 
+        // category delete
         $category->delete();
+
         Toastr::success('Category deleted successfully.');
-        return redirect()->back();
+        return back();
     }
+
 
     // Image add and update code here
     private function categoryImage(Request $request)

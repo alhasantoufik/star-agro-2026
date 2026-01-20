@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Category;
+use App\Models\ImageGallery;
 use App\Models\WebsiteSetting;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Pagination\Paginator;
@@ -50,6 +51,23 @@ class AppServiceProvider extends ServiceProvider
 
         // Share $categories with all views
         View::share('categories', $categories);
+
+
+        View::composer('website.layouts.inc.footer', function ($view) {
+
+            $images = ImageGallery::where('is_active', 1)
+                ->latest()
+                ->limit(6)
+                ->get(['image']);
+
+            $view->with('images', $images);
+        });
+
+        // Header এর জন্য website settings
+        View::composer('website.layouts.inc.header', function ($view) {
+            $website_setting = WebsiteSetting::first(); // ধরে নিই একটিমাত্র row আছে
+            $view->with('website_setting', $website_setting);
+        });
 
         // Set Bootstrap for Pagination
         Paginator::useBootstrap();

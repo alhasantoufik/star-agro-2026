@@ -5,78 +5,98 @@
 <!-- Start of Breadcrumb section
 	============================================= -->
 <section id="or-breadcrumbs" class="or-breadcrumbs-section position-relative" data-background="{{ asset('assets/img/bg/bg-page-title.jpg') }}">
-    <div class="background_overlay"></div>
-    <div class="container">
-        <div class="or-breadcrumbs-content text-center">
-            <div class="page-title headline">
-                <h1>Products Details</h1>
-            </div>
-            <div class="or-breadcrumbs-items ul-li">
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li>Products Details</li>
-                </ul>
-            </div>
-        </div>
-    </div>
+	<div class="background_overlay"></div>
+	<div class="container">
+		<div class="or-breadcrumbs-content text-center">
+			<div class="page-title headline">
+				<h1>Products Details</h1>
+			</div>
+			<div class="or-breadcrumbs-items ul-li">
+				<ul>
+					<li><a href="#">Home</a></li>
+					<li>Products Details</li>
+				</ul>
+			</div>
+		</div>
+	</div>
 </section>
 <!-- End of Breadcrumb section
 	============================================= -->
 
 <!-- Start of Shop Details section
 	============================================= -->
-	<section id="or-shop-details" class="or-shop-details-section">
-		<div class="container">
-			<div class="or-shop-details-content">
-				<div class="row">
-					<div class="col-lg-6">
-						<div class="shop-details-img-slider-area">
-							<div class="shop-details-img-slider">
-								<div class="shop-details-img-wrap">
-									<img src="{{ asset($product->thumbnail) }}" alt="" data-zoomed="{{ asset($product->thumbnail) }}">
-								</div>
-								<!-- <div class="shop-details-img-wrap">
-									<img src="{{ asset($product->thumbnail) }}" alt="" data-zoomed="{{ asset($product->thumbnail) }}">
-								</div>
-								<div class="shop-details-img-wrap">
-									<img src="{{ asset($product->thumbnail) }}" alt="" data-zoomed="{{ asset($product->thumbnail) }}">
-								</div> -->
+<section id="or-shop-details" class="or-shop-details-section">
+	<div class="container">
+		<div class="or-shop-details-content">
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="shop-details-img-slider-area">
+						<div class="shop-details-img-slider">
+							<div class="shop-details-img-wrap">
+								<img src="{{ asset($product->thumbnail) }}" alt="" data-zoomed="{{ asset($product->thumbnail) }}">
 							</div>
-							<div class="shop-details-img-thumb">
-								<!-- <div class="or-thumb-img">
+							<!-- <div class="shop-details-img-wrap">
+									<img src="{{ asset($product->thumbnail) }}" alt="" data-zoomed="{{ asset($product->thumbnail) }}">
+								</div>
+								<div class="shop-details-img-wrap">
+									<img src="{{ asset($product->thumbnail) }}" alt="" data-zoomed="{{ asset($product->thumbnail) }}">
+								</div> -->
+						</div>
+						<div class="shop-details-img-thumb">
+							<!-- <div class="or-thumb-img">
 									<img src="{{ asset($product->thumbnail) }}" alt="">
 								</div>
 								<div class="or-thumb-img">
 									<img src="{{ asset($product->thumbnail) }}" alt="">
 								</div> -->
-								<div class="or-thumb-img">
-									<img src="{{ asset($product->thumbnail) }}" alt="">
-								</div>
+							<div class="or-thumb-img">
+								<img src="{{ asset($product->thumbnail) }}" alt="">
 							</div>
 						</div>
 					</div>
-					<div class="col-lg-6">
-						<div class="shop-details-text  headline pera-content">
-							<div class="shop-details-title">
-								<h3>{{ $product->product_name }}</h3>
+				</div>
+				<div class="col-lg-6">
+					<div class="shop-details-text  headline pera-content">
+						<div class="shop-details-title">
+							<h3>{{ $product->product_name }}</h3>
+						</div>
+						<div class="shop-details-rate-review ul-li d-flex">
+							<div class="shop-details-rate">
+								<ul>
+									<li><i class="fas fa-star"></i></li>
+									<li><i class="fas fa-star"></i></li>
+									<li><i class="fas fa-star"></i></li>
+									<li><i class="fas fa-star"></i></li>
+									<li><i class="fas fa-star"></i></li>
+								</ul>
 							</div>
-							<div class="shop-details-rate-review ul-li d-flex">
-								<div class="shop-details-rate">
-									<ul>
-										<li><i class="fas fa-star"></i></li>
-										<li><i class="fas fa-star"></i></li>
-										<li><i class="fas fa-star"></i></li>
-										<li><i class="fas fa-star"></i></li>
-										<li><i class="fas fa-star"></i></li>
-									</ul>
-								</div>
-								<div class="shop-details-review">(4.9 Based on 02 Reviews)</div>
-								<div class="shop-details-review"><span>02 Reviews</span> <span>24 orders</span></div>
-							</div>
-							<div class="shop-details-price">BDT. {{ $product->regular_price }}</div>
-							<div class="shop-details-text-decs"><p>{{ $product->short_description }}</p>
-							</div>
-							<!-- <div class="shop-details-option color-option ul-li">
+							<div class="shop-details-review">(4.9 Based on 02 Reviews)</div>
+							<div class="shop-details-review"><span>02 Reviews</span> <span>24 orders</span></div>
+						</div>
+						<div class="shop-details-price">
+							@if ($product->discount_price)
+							@php
+							if ($product->discount_type === 'flat') {
+							$final_price = $product->regular_price - $product->discount_price;
+							} else {
+							$discount_amount = ($product->regular_price * $product->discount_price) / 100;
+							$final_price = $product->regular_price - $discount_amount;
+							}
+							@endphp
+
+							ট. {{ number_format($final_price, 2) }}
+							<del class="ms-2 text-muted">
+								ট. {{ number_format($product->regular_price, 2) }}
+							</del>
+							@else
+							ট. {{ number_format($product->regular_price, 2) }}
+							@endif
+						</div>
+
+						<div class="shop-details-text-decs">
+							<p>{{ $product->short_description }}</p>
+						</div>
+						<!-- <div class="shop-details-option color-option ul-li">
 								<span class="option-title">Color:</span>
 								<ul>
 									<li class="color-1 active"></li>
@@ -98,46 +118,47 @@
 								<a href="#">Add To Cart</a>
 								<a href="#">Add To Wishlist</a>
 							</div> -->
-							<div class="shop-details-product-code ul-li-block">
-								<ul>	
-									<!-- <li><span>SKU: </span> WT-05789-567-78</li> -->
-									<li><span>Category: </span>{{ $product->category->category_name ?? 'N/A' }}</li>
-								</ul>	
-							</div>
+						<div class="shop-details-product-code ul-li-block">
+							<ul>
+								<!-- <li><span>SKU: </span> WT-05789-567-78</li> -->
+								<li><span>Category: </span>{{ $product->category->category_name ?? 'N/A' }}</li>
+							</ul>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</section>
+	</div>
+</section>
 <!-- End of Shop Details section
 	============================================= -->
 
 <!-- Start of Shop details description tab section
 	============================================= -->
-	<section id="or-shop-details-tab" class="or-shop-details-tab-section">
-		<div class="container">
-			<div class="or-shop-details-review-tab-content">
-				<div class="or-shop-review-tab-btn">
-					<ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
-						<li class="nav-item" role="presentation">
-							<button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Description</button>
-						</li>
-						<!-- <li class="nav-item" role="presentation">
+<section id="or-shop-details-tab" class="or-shop-details-tab-section">
+	<div class="container">
+		<div class="or-shop-details-review-tab-content">
+			<div class="or-shop-review-tab-btn">
+				<ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Description</button>
+					</li>
+					<!-- <li class="nav-item" role="presentation">
 							<button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Additional info</button>
 						</li>
 						<li class="nav-item" role="presentation">
 							<button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Review (02)</button>
 						</li> -->
-					</ul>
-				</div>
-				<div class="or-shop-details-tab-textarea">
-					<div class="tab-content" id="myTabContent">
-						<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-							<div class="shop-details-description-text  text-center"><p>{!! $product->long_description !!}</p>
-							</div>
+				</ul>
+			</div>
+			<div class="or-shop-details-tab-textarea">
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+						<div class="shop-details-description-text  text-center">
+							<p>{!! $product->long_description !!}</p>
 						</div>
-						<!-- <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+					</div>
+					<!-- <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
 							<div class="product-description-text pera-content">
 								<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
 								<p>
@@ -299,13 +320,13 @@
 								</div>
 							</div>
 						</div> -->
-					</div>
 				</div>
 			</div>
 		</div>
-	</section>
+	</div>
+</section>
 <!-- End Shop details description tab section
-	============================================= -->				
+	============================================= -->
 
 
 

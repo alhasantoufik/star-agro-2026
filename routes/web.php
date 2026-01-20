@@ -29,13 +29,15 @@ Route::get('/product-page', [FrontendController::class, 'productPage'])->name('p
 
 Route::get('/about-us', [FrontendController::class,'aboutUs'])->name('about.us');
 
+
+
 // Price filtering
 Route::get('/price-filter', [FrontendController::class, 'priceFilter'])->name('website.price.filter');
 Route::get('/category-filter-multi', [FrontendController::class, 'multiCategoryFilter'])->name('category_product.filter.multi');
 Route::get('/brand-filter-multi', [FrontendController::class, 'multiBrandFilter'])->name('brand_product.filter.multi');
 Route::get('/get-category-products/{id}', [FrontendController::class, 'getCategoryProducts'])->name('get_category.products');
 
-Route::get('service/category/{category_slug}', [ServiceController::class, 'categoryProducts'])->name('service.category');
+Route::get('/category/{slug}', [FrontendController::class, 'categoryProducts'])->name('product.category');
 
 
 Route::get('/product-details-page/{id}', [FrontendController::class, 'productSinglePage'])->name('product_single.page');

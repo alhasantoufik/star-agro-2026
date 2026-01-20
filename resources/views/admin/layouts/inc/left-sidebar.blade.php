@@ -81,6 +81,11 @@
                     <i class="zmdi zmdi-assignment"></i><span>CSR Manage</span>
                 </a>
             </li>
+            <li class="{{ $isAboutPageActive ? 'active' : '' }}">
+                <a href="{{ route('company.profile') }}">
+                    <i class="zmdi zmdi-assignment"></i><span>Company Profile</span>
+                </a>
+            </li>
 
             <li class="{{ request()->routeIs('career.index') ? 'active' : '' }}">
                 <a href="{{ route('career.index') }}"><i class="zmdi zmdi-case"></i>

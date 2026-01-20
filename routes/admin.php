@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\Admin\CompanyProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\CtaController;
 use App\Http\Controllers\Admin\FaqController;
@@ -266,7 +267,7 @@ Route::prefix('admin')
         // Newsletter
         Route::get('Newslatter', [NewslatterController::class, 'index'])->name('newslatter');
 
-        Route::get('Newslatter/destroy/{id}', [NewslatterController::class, 'destroy'])->name('newslatter.destroy');
+        Route::delete('Newslatter/destroy/{id}', [NewslatterController::class, 'destroy'])->name('newslatter.destroy');
 
         // SMS Settings
         Route::get('sms-settings', [SmsSettingController::class, 'edit'])->name('sms-settings.edit');
@@ -290,6 +291,10 @@ Route::prefix('admin')
         // Privacy policy route
         Route::get('privacy-policy', [PrivacypolicyController::class, 'privacyPolicy'])->name('privacy_policy');
         Route::put('/privacy-policy/{id}', [PrivacypolicyController::class, 'update'])->name('privacy_policy.update');
+
+         // company profile route
+        Route::get('company-profile', [CompanyProfileController::class, 'companyProfile'])->name('company.profile');
+        Route::put('/company-profile/{id}', [CompanyProfileController::class, 'update'])->name('company_profile.update');
 
         //Return and refund
         Route::get('return-refund', [ReturnrefundController::class, 'returnRefund'])->name('return_refund');

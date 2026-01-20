@@ -4,8 +4,8 @@
 			<div class="header-top-content d-flex justify-content-between align-items-center">
 				<div class="or-header-slug ul-li">
 					<ul>
-						<li><i class="far fa-phone-alt"></i> +90 165 568 7894</li>
-						<li><i class="fal fa-map-marker-alt"></i> Maromora Road, Washington, USA</li>
+						<li><i class="far fa-phone-alt"></i>{{ $website_setting->phone }}</li>
+						<li><i class="fal fa-map-marker-alt"></i>{{ $website_setting->address }}</li>
 					</ul>
 				</div>
 			</div>
@@ -15,7 +15,7 @@
 		<div class="container">
 			<div class="or-header-main-menu-content d-flex justify-content-between align-items-center">
 				<div class="site-logo">
-					<a href="#"><img src="{{ asset('assets/img/logo/logo3.png') }}" alt=""></a>
+					<a href="{{ route('home') }}"><img src="{{ asset($website_setting->website_logo) }}" height="143px" width="57px" alt="logo"></a>
 				</div>
 				<div class="or-header-main-navigation-btn d-flex">
 					<nav class="main-navigation-area clearfix ul-li">
@@ -24,15 +24,24 @@
 								<a href="{{ route('home') }}"><span class="menu-line"></span>Home</a>
 							</li>
 							<li><a href="{{ route('about.page') }}"><span class="menu-line"></span>About Us</a></li>
+
+
 							<li class="dropdown">
-								<a href="{{ route('product.page') }}"><span class="menu-line"></span>Products</a>
+								<a href="{{ route('product.page') }}">
+									<span class="menu-line"></span>Products
+								</a>
+
 								<ul class="dropdown-menu clearfix">
-									<li><a href="#">Category 1</a></li>
-									<li><a href="#">Category 2</a></li>
-									<li><a href="#">Category 3</a></li>
-									<li><a href="#">Category 4</a></li>
+									@foreach($categories as $category)
+									<li>
+										<a href="{{ route('product.category', $category->category_slug) }}">
+											{{ $category->category_name }}
+										</a>
+									</li>
+									@endforeach
 								</ul>
 							</li>
+
 							<li class="dropdown">
 								<a href="#"><span class="menu-line"></span>Gallery</a>
 								<ul class="dropdown-menu clearfix">
@@ -86,20 +95,26 @@
 								</li>
 								<li><a target="" href="{{ route('about.page') }}">About</a></li>
 								<li class="dropdown">
-									<a target="" href="{{ route('product.page') }}">Products</a>
-									<ul class="dropdown-menu clearfix">
-										<li><a target="_blank" href="shop.html">Category 1</a></li>
-										<li><a target="_blank" href="shop-single.html">Category 2</a></li>
-										<li><a target="_blank" href="cart.html">Category 3</a></li>
-										<li><a target="_blank" href="checkout.html">Category 4</a></li>
-									</ul>
-								</li>
+								<a href="{{ route('product.page') }}">
+									<span class="menu-line"></span>Products
+								</a>
+
+								<ul class="dropdown-menu clearfix">
+									@foreach($categories as $category)
+									<li>
+										<a href="{{ route('product.category', $category->category_slug) }}">
+											{{ $category->category_name }}
+										</a>
+									</li>
+									@endforeach
+								</ul>
+							</li>
 								<li class="dropdown">
 									<a target="" href="#">Gallery</a>
 									<ul class="dropdown-menu clearfix">
 										<li><a target="" href="{{ route('image-gallery') }}">Images</a></li>
 										<li><a target="" href="{{ route('video-gallery') }}">Videos</a></li>
-										
+
 									</ul>
 								</li>
 								<li class="dropdown">
@@ -116,7 +131,7 @@
 									<ul class="dropdown-menu clearfix">
 										<li><a target="" href="{{ route('companyProfile') }}">Company profile</a></li>
 										<li><a target="" href="{{ route('topManagement') }}">Top management</a></li>
-										
+
 									</ul>
 								</li>
 							</ul>
