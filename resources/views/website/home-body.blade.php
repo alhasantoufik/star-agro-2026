@@ -1,5 +1,5 @@
 @extends('website.home')
-@section('title', 'Home | Organio')
+@section('title', 'Star Agro | Home ')
 @section('content')
 
 

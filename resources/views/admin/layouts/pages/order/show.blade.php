@@ -33,13 +33,23 @@
     <div class="row clearfix">
         <div class="col-lg-12 col-md-12 col-sm-12 mt-4">
             @php
-                $setting = App\Models\WebsiteSetting::first();
+            $setting = App\Models\WebsiteSetting::first();
             @endphp
 
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4>Payment Information</h4>
                     <button class="btn btn-primary" onclick="printInvoice()">Print Invoice</button>
+                </div>
+                <div>
+                    @if($order->status === 'confirmed' && !$order->consignment_id)
+                    <form action="{{ route('admin.orders.sendToSteadfast', $order->id) }}" method="POST">
+                        @csrf
+                        <button class="btn btn-sm btn-success">
+                            Send to Steadfast
+                        </button>
+                    </form>
+                    @endif
                 </div>
                 <div class="card-body" id="invoice">
                     <div class="container border p-4">
@@ -73,14 +83,14 @@
                             </thead>
 
                             @php
-                                $subtotal = 0;
+                            $subtotal = 0;
                             @endphp
 
                             <tbody>
                                 @foreach ($order->orderItems as $key => $orderItem)
-                                 @php
-                                    $total = $orderItem->price * $orderItem->quantity;
-                                    $subtotal += $total;
+                                @php
+                                $total = $orderItem->price * $orderItem->quantity;
+                                $subtotal += $total;
                                 @endphp
 
                                 <tr>

@@ -1,3 +1,10 @@
+<style>
+	.ul-li ul li {
+    list-style: none;
+    display :inline-block;
+	gap: 20px;
+}
+</style>
 <header id="organio-header" class="organio-header-section header-style-four">
 	<div class="header-top">
 		<div class="container">
@@ -6,6 +13,16 @@
 					<ul>
 						<li><i class="far fa-phone-alt"></i>{{ $website_setting->phone }}</li>
 						<li><i class="fal fa-map-marker-alt"></i>{{ $website_setting->address }}</li>
+					</ul>
+				</div>
+				<div class="or-header-slug-right ul-li">
+					<ul style="list-style: none; padding: 0; margin: 0; display: flex; gap: 20px;">
+						<li style="display: flex;">
+							<a href="#" tabindex="0" style="color: #fff; font-size: 18px;"><i class="fab fa-facebook-f"></i></a>
+							<a href="#" tabindex="0" style="color: #fff; font-size: 18px;"><i class="fab fa-twitter"></i></a>
+							<a href="#" tabindex="0" style="color: #fff; font-size: 18px;"><i class="fab fa-dribbble"></i></a>
+							<a href="#" tabindex="0" style="color: #fff; font-size: 18px;"><i class="fab fa-behance"></i></a>
+						</li>
 					</ul>
 				</div>
 			</div>
@@ -62,7 +79,7 @@
 								<a href="#"><span class="menu-line"></span>Others</a>
 								<ul class="dropdown-menu clearfix">
 									<li><a href="{{ route('companyProfile') }}">Company Profile</a></li>
-									<li><a href="{{ route('topManagement') }}">Top management</a></li>
+									<li><a href="{{ route('topManagement') }}">Top Management</a></li>
 								</ul>
 							</li>
 						</ul>
@@ -95,20 +112,20 @@
 								</li>
 								<li><a target="" href="{{ route('about.page') }}">About</a></li>
 								<li class="dropdown">
-								<a href="{{ route('product.page') }}">
-									<span class="menu-line"></span>Products
-								</a>
+									<a href="{{ route('product.page') }}">
+										<span class="menu-line"></span>Products
+									</a>
 
-								<ul class="dropdown-menu clearfix">
-									@foreach($categories as $category)
-									<li>
-										<a href="{{ route('product.category', $category->category_slug) }}">
-											{{ $category->category_name }}
-										</a>
-									</li>
-									@endforeach
-								</ul>
-							</li>
+									<ul class="dropdown-menu clearfix">
+										@foreach($categories as $category)
+										<li>
+											<a href="{{ route('product.category', $category->category_slug) }}">
+												{{ $category->category_name }}
+											</a>
+										</li>
+										@endforeach
+									</ul>
+								</li>
 								<li class="dropdown">
 									<a target="" href="#">Gallery</a>
 									<ul class="dropdown-menu clearfix">
@@ -129,8 +146,8 @@
 								<li class="dropdown">
 									<a target="" href="#">Others</a>
 									<ul class="dropdown-menu clearfix">
-										<li><a target="" href="{{ route('companyProfile') }}">Company profile</a></li>
-										<li><a target="" href="{{ route('topManagement') }}">Top management</a></li>
+										<li><a target="" href="{{ route('companyProfile') }}">Company Profile</a></li>
+										<li><a target="" href="{{ route('topManagement') }}">Top Management</a></li>
 
 									</ul>
 								</li>

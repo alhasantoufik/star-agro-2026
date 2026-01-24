@@ -1,5 +1,5 @@
 @extends('website.home')
-@section('title', 'Product Details | Organio')
+@section('title', 'Product Details | Star Agro')
 @section('content')
 
 <!-- Start of Breadcrumb section

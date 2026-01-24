@@ -100,9 +100,9 @@
 
                             <div class="row mb-3">
                                 <div class="col-lg-6">
-                                    <label for="category_id"><b>Brand</b></label>
+                                    <label for="brand_id"><b>Brand</b></label>
                                     <div class="form-group" style="border: 1px solid #ccc">
-                                        <select name="category_id" class="form-control show-tick">
+                                        <select name="brand_id" class="form-control show-tick">
                                             <option disabled selected>Select Brand ....</option>
                                             @foreach ($brands as $brand)
                                                 <option value="{{ $brand->id }}">{{ $brand->brand_name }}</option>

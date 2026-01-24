@@ -5,7 +5,7 @@
                 <div class="col-lg-3 col-md-6">
                     <div class="or-footer-widget headline pera-content ul-li-block">
                         <div class="or-logo-widget">
-                            <a href="#"><img src="{{ asset($website_setting->website_footer_logo) }}" height="160px" width="70px" alt=""></a>
+                            <a href="{{ route('home') }}"><img src="{{ asset($website_setting->website_footer_logo) }}" height="160px" width="70px" alt=""></a>
                             <p>{{ $website_setting->footer_content }}</p>
                             <div class="footer-social">
                                 <a href="#" tabindex="0"><i class="fab fa-facebook-f"></i></a>
@@ -39,7 +39,7 @@
                                 <li><i class="fas fa-envelope"></i> <span>{{ $website_setting->email }}</span></li>
                             </ul>
                             <span class="title">Open Hours: </span>
-                            <p>Mon - Sat: 8 am - 5 pm, Sunday: CLOSED</p>
+                            <p>Sat-Thu: 8 am - 6 pm, Friday: CLOSED</p>
                         </div>
                     </div>
                 </div>
@@ -66,7 +66,34 @@
         </div>
     </div>
 
-    <div class="or-footer-copyright text-center">
+    <style>
+        .or-footer-copyright {
+            display: flex;
+            justify-content: center;
+            /* center everything initially */
+            align-items: center;
+            gap: 700px;
+            /* space between the two spans */
+            flex-wrap: wrap;
+            /* stack on small screens */
+            padding: 10px 20px;
+        }
+
+        /* Mobile view */
+        @media (max-width: 768px) {
+            .or-footer-copyright {
+                flex-direction: column;
+                /* stack vertically */
+                gap: 5px;
+                /* smaller gap on mobile */
+            }
+        }
+    </style>
+
+    <div class="or-footer-copyright">
         <span>© {{ $website_setting->copyright_text }} All rights reserved.</span>
+        <span>Developed By: <a href="https://www.freelanceit.com.bd/" target="_blank" style="color: aquamarine;">Freelance iT</a></span>
     </div>
+
+
 </footer>

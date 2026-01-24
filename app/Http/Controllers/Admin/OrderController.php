@@ -1,10 +1,13 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Http;
+
 
 class OrderController extends Controller
 {
@@ -54,57 +57,6 @@ class OrderController extends Controller
         return redirect()->back();
     }
 
-    // Just date and updated date for filter orders
-
-    // public function orderFilter(Request $request)
-    // {
-    //     $start_date = $request->start_date;
-    //     $end_date = $request->end_date;
-
-    //     $orders = Order::where(function ($query) use ($start_date, $end_date) {
-    //         if ($start_date && $end_date) {
-    //             $query->whereBetween('created_at', [$start_date, $end_date])->orWhereBetween('updated_at', [$start_date, $end_date]);
-    //         }
-    //     })->get();
-
-    //     return response()->json(['orders' => $orders]);
-    // }
-
-    // public function orderFilter(Request $request)
-    // {
-    //     $start_date = $request->start_date;
-    //     $end_date   = $request->end_date;
-    //     $status     = $request->status;
-
-    //     $query = Order::query();
-
-    //     if ($start_date) {
-    //         $query->whereDate('created_at', '>=', $start_date);
-    //     }
-
-    //     if ($end_date) {
-    //         $query->whereDate('created_at', '<=', $end_date);
-    //     }
-
-    //     if ($status) {
-    //         $query->where('status', $status);
-    //     }
-
-    //     $orders = $query->latest()->get();
-
-    //     $totalAmount = $orders->sum('total_price');
-
-    //     if ($request->ajax()) {
-    //         return response()->json([
-    //             'html' => view('admin.layouts.pages.order.partials.order_table', [
-    //                 'orders'         => $orders,
-    //                 'filteredStatus' => $status,
-    //             ])->render(),
-    //         ]);
-    //     }
-
-    //     return view('admin.layouts.pages.order.index', compact('orders'));
-    // }
 
     public function orderFilter(Request $request)
     {
@@ -143,4 +95,44 @@ class OrderController extends Controller
         return view('admin.layouts.pages.order.index', compact('orders'));
     }
 
+    public function sendToSteadfast($id)
+    {
+        $order = Order::findOrFail($id);
+
+        // Already sent protection
+        if ($order->consignment_id) {
+            return back()->with('error', 'Order already sent to courier.');
+        }
+
+        // Only confirmed orders
+        if ($order->status !== 'confirmed') {
+            return back()->with('error', 'Only confirmed orders can be sent.');
+        }
+
+        $response = Http::withHeaders([
+            'Api-Key'    => config('services.steadfast.key'),
+            'Secret-Key' => config('services.steadfast.secret'),
+            'Accept'     => 'application/json',
+        ])->post(config('services.steadfast.url') . '/create_order', [
+            'invoice'           => $order->order_id,
+            'recipient_name'    => trim($order->first_name . ' ' . $order->last_name),
+            'recipient_phone'   => $order->phone,
+            'recipient_address' => $order->address,
+            'cod_amount'        => $order->total_price,
+        ]);
+
+        if ($response->successful()) {
+
+            $order->update([
+                'courier_name'   => 'steadfast',
+                'courier_status' => 'sent',
+                'consignment_id' => $response['consignment_id'] ?? null,
+                'status'         => 'shipped',
+            ]);
+
+            return back()->with('success', 'Order sent to Steadfast successfully.');
+        }
+
+        return back()->with('error', 'Steadfast API error.');
+    }
 }

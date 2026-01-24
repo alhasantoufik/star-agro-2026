@@ -34,5 +34,11 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'steadfast' => [
+        'key'    => env('STEADFAST_API_KEY'),
+        'secret' => env('STEADFAST_SECRET_KEY'),
+        'url'    => env('STEADFAST_BASE_URL'),
+    ],
+
 
 ];

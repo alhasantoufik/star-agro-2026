@@ -1,5 +1,5 @@
 @extends('website.home')
-@section('title', 'Company Profile | Organio')
+@section('title', 'Company Profile | Star Agro')
 @section('content')
 
     <section id="or-breadcrumbs" class="or-breadcrumbs-section position-relative" data-background="{{ asset('assets/img/bg/bg-page-title.jpg') }}">

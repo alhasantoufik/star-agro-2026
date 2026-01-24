@@ -12,7 +12,7 @@ class ContactController extends Controller
     public function contactPage()
     {
         $pageTitle = 'Contact Us';
-        $website_setting = WebsiteSetting::select(['id', 'phone', 'website_title', 'email', 'address'])->first();
+        $website_setting = WebsiteSetting::select(['id', 'phone', 'website_title', 'email', 'address','website_title','website_logo','website_footer_logo','footer_content'])->first();
         return view('website.layouts.pages.contact.contact', compact([
             'pageTitle','website_setting',
         ]));

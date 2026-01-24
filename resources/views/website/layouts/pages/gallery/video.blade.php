@@ -1,5 +1,5 @@
 @extends('website.home')
-@section('title', 'Videos | Organio')
+@section('title', 'Videos | Star Agro')
 @section('content')
 <style>
     .video-card {

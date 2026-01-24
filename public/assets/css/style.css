@@ -3578,7 +3578,7 @@ select:visited {
 }
 
 .best-price-product-4 {
-  padding-top: 40px;
+  padding-top: 0px;
 }
 
 .or-best-product-slider-area {
@@ -7108,7 +7108,8 @@ select:visited {
 .or-breadcrumbs-section .or-breadcrumbs-content {
   z-index: 1;
   position: relative;
-  padding: 115px 0px 105px;
+  padding-top: 100px;
+  padding-bottom: 50px;
 }
 
 .or-breadcrumbs-section .or-breadcrumbs-content .page-title {
@@ -7146,7 +7147,7 @@ select:visited {
 /*Contact area*/
 /*----------------------------------------------------*/
 .or-contact-info-section {
-  padding: 100px 0px;
+  padding: 60px 0px;
 }
 
 .or-contact-innerbox-layout1 .item--inner {
@@ -9039,7 +9040,7 @@ select:visited {
   }
 
   .or-why-choose-section-2 {
-    padding: 55px 0px;
+    padding: 50px 0px;
   }
 
   .or-why-choose-section-2 .or-why-choose-img-2 {

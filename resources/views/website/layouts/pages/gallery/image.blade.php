@@ -1,5 +1,5 @@
 @extends('website.home')
-@section('title', 'Images | Organio')
+@section('title', 'Images | Star Agro')
 @section('content')
 
 <style>

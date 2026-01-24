@@ -206,6 +206,10 @@ Route::prefix('admin')
         Route::get('/admin/filter-order', [OrderController::class, 'orderFilter'])->name('filter.orders');
         Route::post('/order/change-status/{id}', [OrderController::class, 'orderChangeStatus'])->name('orderChangeStatus');
 
+
+        Route::post('/admin/orders/{id}/send-to-steadfast',[OrderController::class, 'sendToSteadfast'])->name('admin.orders.sendToSteadfast');
+
+
         // Team
         Route::prefix('team')->group(function () {
             Route::get('/', [TeamController::class, 'index'])->name('team.index');
@@ -292,7 +296,7 @@ Route::prefix('admin')
         Route::get('privacy-policy', [PrivacypolicyController::class, 'privacyPolicy'])->name('privacy_policy');
         Route::put('/privacy-policy/{id}', [PrivacypolicyController::class, 'update'])->name('privacy_policy.update');
 
-         // company profile route
+        // company profile route
         Route::get('company-profile', [CompanyProfileController::class, 'companyProfile'])->name('company.profile');
         Route::put('/company-profile/{id}', [CompanyProfileController::class, 'update'])->name('company_profile.update');
 
@@ -326,7 +330,7 @@ Route::prefix('admin')
         Route::delete('career/{career}', [CareerController::class, 'destroy'])->name('career.destroy');
 
 
-                /*
+        /*
         |--------------------------------------------------------------------------
         | Job Apply Routes
         |--------------------------------------------------------------------------

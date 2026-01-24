@@ -8,7 +8,7 @@
         <div class="best-price-product-4">
 
             {{-- Category Filter --}}
-            <div class="or-best-price-filter-btn ul-li text-center">
+            <!-- <div class="or-best-price-filter-btn ul-li text-center">
                 <ul class="filter clearfix">
                     <li class="active" data-filter="*">All Product</li>
                     @foreach ($categories as $category)
@@ -17,7 +17,7 @@
                         </li>
                     @endforeach
                 </ul>
-            </div>
+            </div> -->
 
             {{-- Product Area --}}
             <div class="or-best-product-slider-area">
